@@ -1,10 +1,11 @@
+import SearchBar from "./(components)/(searchbar)/SearchBar";
 
 
 export default function Home() {
-  console.log(process.env.MONGODB_URI);
   return (
-    <main>
-      HELLO
+    <main className="flex justify-center items-center flex-col w-100">
+      SOME TEXT
+      <SearchBar/>
     </main>
      
   );
