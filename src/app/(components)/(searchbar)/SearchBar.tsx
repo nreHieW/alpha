@@ -58,7 +58,7 @@ export default function SearchBar() {
         onChange={(event) => setSearchQuery(event.target.value)}
       />
       {items.length > 0 && (
-        <ul className="results-list flex-1 py-3 px-5 mt-5 w-full bg-gray-900 max-h-64 overflow-auto">
+        <ul className="results-list flex-1 py-3 px-5 mt-5 w-full bg-gray-900 max-h-64 overflow-auto text-white">
           {items.map((item: TickerResult, index) => {
             const ticker = item.Ticker;
             const name = item.name;
