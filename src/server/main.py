@@ -53,10 +53,10 @@ load_dotenv()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # List of origins that are allowed to make requests
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -83,7 +83,7 @@ def cost_of_capital(request: CostOfCapitalRequest):
 
 @app.post("/dcf")
 def discounted_cash_flow(request: DCFRequest):
-    value_per_share, df = dcf(
+    value_per_share, df, cost_of_capital_components = dcf(
         request.revenues,
         request.interest_expense,
         request.book_value_of_equity,
@@ -112,4 +112,4 @@ def discounted_cash_flow(request: DCFRequest):
         request.sales_to_capital_ratio_steady,
     )
     df = df.fillna("")
-    return {"value_per_share": value_per_share, "df": df.to_dict(orient="records")}
+    return {"value_per_share": value_per_share, "df": df.to_dict(orient="records"), "cost_of_capital_components": cost_of_capital_components}

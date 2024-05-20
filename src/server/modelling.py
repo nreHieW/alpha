@@ -15,7 +15,13 @@ def calc_cost_of_capital(interest_expense, pre_tax_cost_of_debt, average_maturit
     cost_of_equity = risk_free_rate + levered_beta * equity_risk_premium
 
     cost_of_capital = cost_of_debt * debt_weight + cost_of_equity * equity_weight
-    return cost_of_capital
+    return cost_of_capital, {
+        "cost_of_debt": cost_of_debt,
+        "cost_of_equity": cost_of_equity,
+        "levered_beta": levered_beta,
+        "risk_free_rate": risk_free_rate,
+        "equity_risk_premium": equity_risk_premium,
+    }
 
 
 def dcf(
@@ -47,7 +53,9 @@ def dcf(
     sales_to_capital_ratio_steady,
 ):
 
-    start_cost_of_capital = calc_cost_of_capital(interest_expense, pre_tax_cost_of_debt, average_maturity, book_value_of_debt, number_of_shares_outstanding, curr_price, unlevered_beta, marginal_tax_rate, risk_free_rate, equity_risk_premium)
+    start_cost_of_capital, cost_of_capital_components = calc_cost_of_capital(
+        interest_expense, pre_tax_cost_of_debt, average_maturity, book_value_of_debt, number_of_shares_outstanding, curr_price, unlevered_beta, marginal_tax_rate, risk_free_rate, equity_risk_premium
+    )
 
     revenue_growth_rates = [0] + [revenue_growth_rate_next_year] + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 2) + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 6).tolist() + [risk_free_rate]
     df = pd.DataFrame({"revenue_growth_rate": revenue_growth_rates})
@@ -96,4 +104,4 @@ def dcf(
     value_of_equity = value_of_equity - value_of_options
     value_per_share = value_of_equity / number_of_shares_outstanding
     df.index = ["Base"] + list(range(1, 11)) + ["Terminal"]
-    return value_per_share, df
+    return value_per_share, df, cost_of_capital_components
