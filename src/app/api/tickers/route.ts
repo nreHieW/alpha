@@ -1,4 +1,4 @@
-import dbConnect from "../../lib/dbconnect";
+import dbConnect from "../../../lib/dbconnect";
 import DCFInput from "@/app/(models)/DcfInputs";
 
 export async function GET(request: Request) {

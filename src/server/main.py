@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from modelling import dcf, calc_cost_of_capital
 import pandas as pd
 from pydantic import BaseModel
+import yfinance as yf
 
 
 class CostOfCapitalRequest(BaseModel):
@@ -63,6 +64,13 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"Status": "OK"}
+
+
+@app.get("/history")
+def get_history(ticker: str):
+    ticker = yf.Ticker(ticker)
+    out = ticker.history(period="6mo")["Close"].values
+    return {"history": out.tolist()}
 
 
 @app.post("/costOfCapital")
