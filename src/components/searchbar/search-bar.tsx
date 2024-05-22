@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Loading } from "../ui/loading";
 
 type TickerResult = {
   Ticker: string;
@@ -18,6 +19,7 @@ export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(""); // To prevent overcall
   const [items, setItems] = useState<TickerResult[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -32,6 +34,7 @@ export default function SearchBar() {
   useEffect(() => {
     const getResults = async () => {
       if (debouncedSearchQuery) {
+        setIsLoading(true);
         let results: TickerResult[] = await getTickers(debouncedSearchQuery);
         results = results.sort((a, b) => {
           if (a.Ticker.toLowerCase() === debouncedSearchQuery.toLowerCase())
@@ -41,24 +44,27 @@ export default function SearchBar() {
           return 0;
         });
         setItems(results);
+        setIsLoading(false);
       }
     };
     getResults();
   }, [debouncedSearchQuery]);
-
   return (
-    <div className="w-2/3">
+    <>
       <input
         type="text"
-        placeholder="Search for a ticker..."
-        className="search w-full flex-1 py-3 px-5 rounded-full text-zinc-200 outline-zinc-200 ring-zinc-200 bg-gray-900 outline-1"
+        className="search w-full flex-1 py-3 px-5 dark:outline-white outline outline-1 outline-zinc-950"
         value={searchQuery}
         spellCheck="false"
         autoCorrect="off"
         onChange={(event) => setSearchQuery(event.target.value)}
       />
-      {items.length > 0 && (
-        <ul className="results-list flex-1 py-3 px-5 mt-5 w-full bg-gray-900 max-h-64 overflow-auto text-white">
+      {isLoading ? (
+        <div className="py-8 justify-center flex">
+          <Loading />
+        </div>
+      ) : items.length > 0 && searchQuery.length > 0 ? (
+        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black dark:bg-zinc-900 bg-zinc-100">
           {items.map((item: TickerResult, index) => {
             const ticker = item.Ticker;
             const name = item.name;
@@ -76,8 +82,13 @@ export default function SearchBar() {
             );
           })}
         </ul>
+      ) : (
+        searchQuery.length > 0 &&
+        items.length === 0 && (
+          <div className="text-center text-sm py-5">No results found</div>
+        )
       )}
-    </div>
+    </>
   );
 }
 
@@ -88,8 +99,8 @@ interface SearchItemProps {
 
 function SearchItem({ text, url }: SearchItemProps) {
   return (
-    <li>
-      <Link href={url}>{text}</Link>
+    <li className="pt-1 text-sm hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
+      <Link href={url} style={{display: 'inline-block'}}>{text}</Link>
     </li>
   );
 }

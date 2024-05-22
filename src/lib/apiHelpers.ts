@@ -1,4 +1,4 @@
-import { DCFInputData } from "../components/TickerDisplay/types";
+import { DCFInputData } from "../components/ticker-display/types";
 
 const baseURL = process.env.URL;
 export async function getDCFInputs(query: string) {

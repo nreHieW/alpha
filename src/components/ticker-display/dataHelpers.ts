@@ -1,4 +1,4 @@
-import { BarChartData } from "@/components/StackedBarChart";
+import { BarChartData } from "@/components/stacked-bar-chart";
 import {
   encode as msgPackEncode,
   decode as msgPackDecode,
@@ -9,13 +9,6 @@ const metrics = [
   "Taxes",
   "Reinvestment",
   "Free Cash Flow",
-];
-const colors = [
-  "rgba(75, 192, 192, 0.5)",
-  "rgba(255, 99, 132, 0.5)",
-  "rgba(54, 162, 235, 0.5)",
-  "rgba(255, 206, 86, 0.5)",
-  "rgba(153, 102, 255, 0.5)",
 ];
 
 export function createIncomeStatementData(data: any[]): BarChartData {
@@ -28,15 +21,12 @@ export function createIncomeStatementData(data: any[]): BarChartData {
         acc.push({
           label: metric,
           data: [],
-          backgroundColor: colors[idx],
-          borderColor: "black",
-          borderWidth: 1,
+          borderWidth: 0,
           borderSkipped: false,
         });
       });
     }
 
-    // acc[0].data.push(revenues);
     acc[0].data.push(operating_expenses);
     acc[1].data.push(taxes);
     acc[2].data.push(reinvestment);
@@ -106,4 +96,16 @@ export function decodeInputs(encoding: string): UserDCFInputs {
   const buffer = Buffer.from(base64, "base64");
   const data = msgPackDecode(buffer);
   return data as UserDCFInputs;
+}
+
+export function formatAmount(value: number): string {
+  if (value >= 1e9) {
+    return `$${(value / 1e9).toFixed(2)}B`;
+  } else if (value >= 1e6) {
+    return `$${(value / 1e6).toFixed(2)}M`;
+  } else if (value < 1e-2) {
+    return `${(value * 100).toFixed(2)}%`;
+  } else {
+    return `${value.toFixed(2)}%`;
+  }
 }

@@ -5,10 +5,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  Title,
-  Tooltip,
   Filler,
-  Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -17,26 +14,33 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
-//   Tooltip,
   Filler,
 );
+ChartJS.defaults.font.family = 'JetBrains Mono'
 
 export default function LineAreaChart({
   priceHistory,
+  good,
+  title,
 }: {
   priceHistory: number[];
+  good: boolean,
+  title: string
 }) {
     
-  return <Line data={{
+  return (
+  <>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet"></link>
+  <p className="text-center text-xs pt-4">{title}</p>
+  <Line data={{
     labels: Array.from({length: priceHistory.length}, (_, i) => i),
     datasets: [
         {
             data: priceHistory,
-            fill:true,
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            fill:false,
+            borderColor: good ? 'rgb(0, 196, 154)' : 'rgb(218, 65, 103)',
             pointRadius: 0,
-            borderWidth: 0.4
+            borderWidth: 1
         }
     ]
   }} options={{
@@ -53,12 +57,19 @@ export default function LineAreaChart({
         },
         y: {
           stacked: true,
-          display: false,
+          display: true,
           grid: {
             display: false, 
             color: 'transparent',
             drawTicks: false,
           },
+          ticks: {
+            font: {
+                family: "JetBrains Mono",
+                weight: 'normal',
+                size: 8.5
+            }
+        }
         },
     },
     plugins: {
@@ -67,4 +78,5 @@ export default function LineAreaChart({
         },
     }
   }}> </Line>
+  </>)
 }

@@ -1,0 +1,126 @@
+"use client";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+} from "chart.js";
+import { useTheme } from "next-themes";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
+
+export type BarChartData = {
+  labels: string[]; // X axis
+  datasets: { label: string; data: number[] }[]; // length of data should match length of labels string[]
+};
+
+type BarChartProps = {
+  data: BarChartData;
+  labels: string[];
+};
+const darkColors = [
+  "rgba(52, 78, 65,1)",
+  "rgba(58, 90, 64,1)",
+  "rgba(88, 129, 87,1)",
+  "rgba(163, 177, 138,1)",
+];
+const lightColors = [
+  "rgba(202, 240, 248,1)",
+  "rgba(144, 224, 239,1)",
+  "rgba(0, 180, 216,1)",
+  "rgba(0, 119, 182,1)",
+];
+function StackedBarChart({ data, labels }: BarChartProps) {
+  const { resolvedTheme } = useTheme();
+  const sumLabel = {
+    id: "sumLabel",
+    beforeDatasetDraw(chart: any, args: Object, plugins: any) {
+      const { ctx } = chart;
+      const datasetMetas = Array.from(Array(4).keys()).map((i) =>
+        chart.getDatasetMeta(i)
+      );
+      datasetMetas[0].data.forEach((bar: any, index: number) => {
+        const label = labels[index];
+        const y = datasetMetas.reduce((acc, meta) => {
+          return Math.min(acc, meta.data[index].y);
+        }, 400);
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.fillStyle = resolvedTheme === "dark" ? "white" : "black";
+        ctx.font = "9px JetBrains Mono";
+        ctx.fillText(label, bar.x, y - 8);
+        ctx.restore();
+      });
+    },
+  };
+
+  const maxAmt = data.datasets.reduce((acc, dataset) => {
+    return Math.max(acc, ...dataset.data);
+  }, 0);
+  const grace = maxAmt * 0.03;
+
+  const options = {
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+        grid: {
+          display: false,
+          drawBorder: false,
+          color: "transparent",
+          drawTicks: false,
+        },
+        ticks: {
+          font: {
+            size: 9,
+          },
+        },
+      },
+      y: {
+        stacked: true,
+        display: false,
+        grace: grace,
+      },
+    },
+  };
+
+  return (
+    <div className="">
+      {resolvedTheme === "dark" ? (
+        <Bar
+          data={{
+            labels: data.labels,
+            datasets: data.datasets.map((dataset, index) => {
+              return {
+                ...dataset,
+                backgroundColor: darkColors[index],
+              };
+            }),
+          }}
+          options={options}
+          plugins={[sumLabel]}
+          redraw={true}
+        />
+      ) : (
+        <Bar
+          data={{
+            labels: data.labels,
+            datasets: data.datasets.map((dataset, index) => {
+              return {
+                ...dataset,
+                backgroundColor: lightColors[index],
+              };
+            }),
+          }}
+          options={options}
+          plugins={[sumLabel]}
+          redraw={true}
+        />
+      )}
+    </div>
+  );
+}
+
+export default StackedBarChart;

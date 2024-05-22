@@ -1,32 +1,33 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { ReactNode } from "react";
+import InfoHover from "../info-hover";
 
 const CardItem = async ({
   children,
   footerChildren,
   title,
-  description,
 }: {
   children: ReactNode;
   footerChildren?: ReactNode;
   title: string;
-  description?: string;
 }) => {
   return (
-    <Card className="w-1/2">
+    <Card className="w-1/2 items-end">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>
+          <div className="flex flex-row">{title}
+          <div className="ml-2">          <InfoHover text="test"></InfoHover></div>
+          </div>
+          </CardTitle>
       </CardHeader>
-      <CardContent>{children}</CardContent>
-      <CardFooter>{footerChildren}</CardFooter>
+      <CardContent className="text-sm">{children}</CardContent>
+      <CardFooter >{footerChildren}</CardFooter>
     </Card>
   );
 };

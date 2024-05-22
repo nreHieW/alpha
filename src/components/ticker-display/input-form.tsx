@@ -87,7 +87,6 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
         type="single"
         collapsible
         defaultValue={"inputs"}
-        className="text-white"
       >
         <AccordionItem
           value="inputs"
