@@ -52,7 +52,11 @@ export default async function TickerDisplay({
           <div className="flex-row flex">
             <p className="text-lg">10 Year Revenue Projections</p>
             <div className="justify-center items-center ml-3 mt-2">
-              <InfoHover text={"Revenues are broken down into operating expense, reinvestment to drive future growth and taxes, to get Free Cash Flow to Firm"}></InfoHover>
+              <InfoHover
+                text={
+                  "Revenues are broken down into operating expense, reinvestment to drive future growth and taxes, to get Free Cash Flow to Firm"
+                }
+              ></InfoHover>
             </div>
           </div>
         </div>
@@ -64,42 +68,29 @@ export default async function TickerDisplay({
         <CardItem
           title="Discount Rate"
           tooltip="Cash flows are discounted at the cost of capital which is calculated using the CAPM model."
-          children={
-            <>
-              Cost of Debt:{" "}
-              {(cost_of_capital_components.cost_of_debt * 100).toFixed(2)}%
-              <br />
-              (Levered) Beta:{" "}
-              {(cost_of_capital_components.levered_beta ).toFixed(2)}
-              <br />
-              Risk Free Rate:{" "}
-              {(cost_of_capital_components.risk_free_rate * 100).toFixed(2)}%
-              <br />
-              Equity Risk Premium:{" "}
-              {(cost_of_capital_components.equity_risk_premium * 100).toFixed(2)}
-              <br />
-              Cost of Equity:{" "}
-              {(cost_of_capital_components.cost_of_equity * 100).toFixed(2)}%
-            </>
-          }
           footerChildren={
             <>Cost of Capital: {formatAmount(df[0].cost_of_capital * 100)}</>
           }
-        />
+        >
+          <>
+            Cost of Debt:{" "}
+            {(cost_of_capital_components.cost_of_debt * 100).toFixed(2)}%
+            <br />
+            (Levered) Beta: {cost_of_capital_components.levered_beta.toFixed(2)}
+            <br />
+            Risk Free Rate:{" "}
+            {(cost_of_capital_components.risk_free_rate * 100).toFixed(2)}%
+            <br />
+            Equity Risk Premium:{" "}
+            {(cost_of_capital_components.equity_risk_premium * 100).toFixed(2)}
+            <br />
+            Cost of Equity:{" "}
+            {(cost_of_capital_components.cost_of_equity * 100).toFixed(2)}%
+          </>
+        </CardItem>
         <CardItem
           title={"Terminal Value"}
           tooltip="The value of the company at the end of the forecast period in stable growth."
-          children={
-            <>
-              Terminal Growth Rate:{" "}
-              {(terminalData.revenue_growth_rate * 100).toFixed(2)}%
-              <br />
-              Terminal Cash Flow: {formatAmount(terminalData.fcff)}
-              <br />
-              Terminal Discount Rate:{" "}
-              {(terminalData.cost_of_capital * 100).toFixed(2)}%
-            </>
-          }
           footerChildren={
             <div className="">
               Terminal Value:{" "}
@@ -110,7 +101,17 @@ export default async function TickerDisplay({
               )}
             </div>
           }
-        />
+        >
+          <>
+            Terminal Growth Rate:{" "}
+            {(terminalData.revenue_growth_rate * 100).toFixed(2)}%
+            <br />
+            Terminal Cash Flow: {formatAmount(terminalData.fcff)}
+            <br />
+            Terminal Discount Rate:{" "}
+            {(terminalData.cost_of_capital * 100).toFixed(2)}%
+          </>
+        </CardItem>
       </div>
       <InputForm
         defaults={{

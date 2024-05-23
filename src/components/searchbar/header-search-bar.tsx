@@ -126,7 +126,7 @@ function BaseSearchBar() {
           <Loading />
         </div>
       ) : items.length > 0 && searchQuery.length > 0 ? (
-        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black dark:bg-zinc-900 bg-zinc-100">
+        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black dark:bg-zinc-950 bg-zinc-100">
           {items.map((item: TickerResult, index) => {
             const ticker = item.Ticker;
             const name = item.name;

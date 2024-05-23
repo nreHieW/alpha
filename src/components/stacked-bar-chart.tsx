@@ -26,6 +26,7 @@ const darkColors = [
   "rgba(88, 129, 87,1)",
   "rgba(163, 177, 138,1)",
 ];
+
 const lightColors = [
   "rgba(202, 240, 248,1)",
   "rgba(144, 224, 239,1)",

@@ -30,7 +30,6 @@ export default function LineAreaChart({
     
   return (
   <>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet"></link>
   <p className="text-center text-xs pt-4">{title}</p>
   <Line data={{
     labels: Array.from({length: priceHistory.length}, (_, i) => i),

@@ -3,6 +3,8 @@ import { JetBrains_Mono } from "next/font/google";
 
 const jetBrains = JetBrains_Mono({ subsets: ["latin"] });
 
+
+
 export default function Home() {
   return (
     <main className="h-2/3 grid">

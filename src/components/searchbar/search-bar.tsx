@@ -26,6 +26,10 @@ export default function SearchBar() {
   const router = useRouter();
 
   useEffect(() => {
+    getTickers("a");
+  }, []);
+
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
     }, 200);

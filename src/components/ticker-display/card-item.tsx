@@ -20,7 +20,7 @@ const CardItem = async ({
   tooltip?: string;
 }) => {
   return (
-    <Card className="w-full h-full flex flex-col">
+    <Card className="w-100 h-full flex flex-col bg-slate-50 dark:bg-zinc-950">
       <CardHeader>
         <CardTitle>
           <div className="flex flex-row">
