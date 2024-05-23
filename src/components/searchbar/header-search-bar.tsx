@@ -2,24 +2,71 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Loading } from "../ui/loading";
+import { Search, X } from "lucide-react";
+import { getTickers } from "./search-bar"
+import Logo from "../logo";
+import { useRouter } from "next/navigation";
 
 type TickerResult = {
   Ticker: string;
   name: string;
 };
 
-const getTickers = async (query: string): Promise<TickerResult[]> => {
-  const tickers = (
-    await fetch(`/api/tickers?query=${encodeURIComponent(query)}`)
-  ).json();
-  return tickers;
-};
-
 export default function HeaderSearchBar() {
+  const [openMobileSearch, setOpenMobileSearch] = useState(false);
+  return (
+    <div >
+      <div className="block sm:hidden ">
+        <Search
+          className="h-[1.2rem] w-[1.2rem] mr-10"
+          onClick={() => setOpenMobileSearch(true)}
+        />
+        {openMobileSearch && (
+          <div
+            className="bg-white/95 dark:bg-[#121212]/95 m-auto top-0 left-0 flex flex-col items-center w-full z-10 absolute"
+            style={{ width: "100%", height: "100%", position: "fixed" }}
+          >
+            <div className="top-10 absolute">
+              <Logo />
+            </div>
+            <div className="w-2/3 h-full" style={{ marginTop: "25vh" }}>
+              <BaseSearchBar />
+            </div>
+              <X onClick={
+                () => setOpenMobileSearch(false)
+              
+              } className="mb-10"/>
+          </div>
+        )}
+      </div>
+      <div className="px-4 align-baseline mx-auto hidden sm:block absolute top-11 w-1/4" style={{left: "52vw"}}>
+        <BaseSearchBar />
+      </div>
+    </div>
+  );
+}
+
+interface SearchItemProps {
+  text: string;
+  url: string;
+}
+
+function SearchItem({ text, url }: SearchItemProps) {
+  return (
+    <li className="pt-1 text-xs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
+      <Link href={url} style={{ display: "inline-block" }}>
+        {text}
+      </Link>
+    </li>
+  );
+}
+
+function BaseSearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(""); // To prevent overcall
   const [items, setItems] = useState<TickerResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -49,16 +96,30 @@ export default function HeaderSearchBar() {
     };
     getResults();
   }, [debouncedSearchQuery]);
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && items.length > 0) {
+      const firstItem = items[0];
+      const displayText = firstItem.Ticker + "  -  " + firstItem.name;
+
+      const urlSlug = displayText
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .split(/\s+/)
+        .join("-");
+      router.push(`/ticker/${urlSlug}`);
+    }
+  };
   return (
-    <div className="px-4 w-4/5 h-1/2 align-baseline mx-auto inline-block">
+    <>
       <input
         type="text"
-        className="search w-full flex-1 py-3 px-4 dark:outline-zinc-300 outline outline-1 outline-zinc-800 h-1/2 text-xs text-zinc-500/40"
+        className="search w-full flex-1 py-2 px-3 dark:outline-zinc-300 outline outline-1 outline-zinc-800 text-xs dark:text-white"
         placeholder="Ticker Search..."
         value={searchQuery}
         spellCheck="false"
         autoCorrect="off"
         onChange={(event) => setSearchQuery(event.target.value)}
+        onKeyDown={handleKeyDown}
       />
       {isLoading ? (
         <div className="py-8 justify-center flex">
@@ -84,24 +145,11 @@ export default function HeaderSearchBar() {
           })}
         </ul>
       ) : (
-        searchQuery.length > 0 &&
+        debouncedSearchQuery.length > 0 &&
         items.length === 0 && (
-          <div className="text-center text-sm py-5">No results found</div>
+          <div className="text-center text-xs py-5">No results found</div>
         )
       )}
-    </div>
-  );
-}
-
-interface SearchItemProps {
-  text: string;
-  url: string;
-}
-
-function SearchItem({ text, url }: SearchItemProps) {
-  return (
-    <li className="pt-1 text-xs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
-      <Link href={url} style={{display: 'inline-block'}}>{text}</Link>
-    </li>
+    </>
   );
 }

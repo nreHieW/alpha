@@ -2,24 +2,28 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Loading } from "../ui/loading";
+import { useRouter } from "next/navigation";
 
 type TickerResult = {
   Ticker: string;
   name: string;
 };
 
-const getTickers = async (query: string): Promise<TickerResult[]> => {
+export const getTickers = async (query: string): Promise<TickerResult[]> => {
   const tickers = (
     await fetch(`/api/tickers?query=${encodeURIComponent(query)}`)
   ).json();
   return tickers;
 };
 
+
+
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(""); // To prevent overcall
   const [items, setItems] = useState<TickerResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -49,6 +53,17 @@ export default function SearchBar() {
     };
     getResults();
   }, [debouncedSearchQuery]);
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && items.length > 0) {
+      const firstItem = items[0];
+      const displayText = firstItem.Ticker + "  -  " + firstItem.name;
+      const urlSlug = displayText
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .split(/\s+/)
+        .join("-");
+      router.push(`/ticker/${urlSlug}`);
+    }
+  };
   return (
     <>
       <input
@@ -58,6 +73,7 @@ export default function SearchBar() {
         spellCheck="false"
         autoCorrect="off"
         onChange={(event) => setSearchQuery(event.target.value)}
+        onKeyDown={handleKeyDown}
       />
       {isLoading ? (
         <div className="py-8 justify-center flex">
@@ -83,7 +99,7 @@ export default function SearchBar() {
           })}
         </ul>
       ) : (
-        searchQuery.length > 0 &&
+        debouncedSearchQuery.length > 0 &&
         items.length === 0 && (
           <div className="text-center text-sm py-5">No results found</div>
         )

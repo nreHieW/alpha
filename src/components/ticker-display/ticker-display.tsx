@@ -38,60 +38,76 @@ export default async function TickerDisplay({
         ticker={ticker}
         value_per_share={value_per_share}
         name={dcfData.name}
+        book_value_of_debt={dcfInputs.book_value_of_debt}
+        cash_and_marketable_securities={
+          dcfInputs.cash_and_marketable_securities
+        }
+        cross_holdings_and_other_non_operating_assets={
+          dcfInputs.cross_holdings_and_other_non_operating_assets
+        }
+        value_of_options={dcfInputs.value_of_options}
       />
       <div>
         <div className="pt-7 flex items-center">
           <div className="flex-row flex">
-            <p className="text-lg">10 Year Cash Flow Projections</p>
-            <div className="justify-center items-center ml-3 mt-2"><InfoHover text={'test'}></InfoHover></div>
+            <p className="text-lg">10 Year Revenue Projections</p>
+            <div className="justify-center items-center ml-3 mt-2">
+              <InfoHover text={"Revenues are broken down into operating expense, reinvestment to drive future growth and taxes, to get Free Cash Flow to Firm"}></InfoHover>
+            </div>
           </div>
         </div>
-
-        <StackedBarChart data={incomeStatementData} labels={revenues} />
+        <div>
+          <StackedBarChart data={incomeStatementData} labels={revenues} />
+        </div>
       </div>
-      <div className="flex flex-row space-x-4 my-6">
+      <div className="grid sm:space-x-4 space-y-4 sm:space-y-0 my-6 sm:grid-cols-2">
         <CardItem
           title="Discount Rate"
+          tooltip="Cash flows are discounted at the cost of capital which is calculated using the CAPM model."
           children={
             <>
               Cost of Debt:{" "}
-              {formatAmount(cost_of_capital_components.cost_of_debt)}
+              {(cost_of_capital_components.cost_of_debt * 100).toFixed(2)}%
               <br />
               (Levered) Beta:{" "}
-              {formatAmount(cost_of_capital_components.levered_beta)}
+              {(cost_of_capital_components.levered_beta ).toFixed(2)}
               <br />
               Risk Free Rate:{" "}
-              {formatAmount(cost_of_capital_components.risk_free_rate)}
+              {(cost_of_capital_components.risk_free_rate * 100).toFixed(2)}%
               <br />
               Equity Risk Premium:{" "}
-              {formatAmount(cost_of_capital_components.equity_risk_premium)}
+              {(cost_of_capital_components.equity_risk_premium * 100).toFixed(2)}
               <br />
               Cost of Equity:{" "}
-              {formatAmount(cost_of_capital_components.cost_of_equity)}
+              {(cost_of_capital_components.cost_of_equity * 100).toFixed(2)}%
             </>
           }
           footerChildren={
-            <>Cost of Capital: {formatAmount((df[0].cost_of_capital * 100))}</>
+            <>Cost of Capital: {formatAmount(df[0].cost_of_capital * 100)}</>
           }
         />
         <CardItem
           title={"Terminal Value"}
+          tooltip="The value of the company at the end of the forecast period in stable growth."
           children={
             <>
               Terminal Growth Rate:{" "}
-              {formatAmount(terminalData.revenue_growth_rate)}
+              {(terminalData.revenue_growth_rate * 100).toFixed(2)}%
               <br />
               Terminal Cash Flow: {formatAmount(terminalData.fcff)}
               <br />
-              Terminal Discount Rate: {formatAmount(terminalData.cost_of_capital)}
+              Terminal Discount Rate:{" "}
+              {(terminalData.cost_of_capital * 100).toFixed(2)}%
             </>
           }
           footerChildren={
-            <div className="self-end">
+            <div className="">
               Terminal Value:{" "}
-              {formatAmount(terminalData.fcff /
-                (terminalData.cost_of_capital -
-                  terminalData.revenue_growth_rate))}
+              {formatAmount(
+                terminalData.fcff /
+                  (terminalData.cost_of_capital -
+                    terminalData.revenue_growth_rate)
+              )}
             </div>
           }
         />
@@ -101,6 +117,8 @@ export default async function TickerDisplay({
           revenues: dcfInputs.revenues,
           revenue_growth_rate_next_year:
             dcfInputs.revenue_growth_rate_next_year,
+          operating_income:
+            dcfInputs.revenues * dcfInputs.operating_margin_next_year,
           operating_margin_next_year: dcfInputs.operating_margin_next_year,
           compounded_annual_revenue_growth_rate:
             dcfInputs.compounded_annual_revenue_growth_rate,

@@ -11,7 +11,7 @@ export default function InfoHover({ text }: { text: string }) {
         <Info style={{ width: "0.9em", height: "0.9em" }}/>
       </HoverCardTrigger>
       <HoverCardContent>
-        <p className="text-xs" style={{opacity: "40%"}}>{text}</p>
+        <p className="py-0 px-0" style={{opacity: "40%", fontSize: "0.7rem", lineHeight:"1.1rem"}}>{text}</p>
       </HoverCardContent>
     </HoverCard>
   );

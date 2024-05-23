@@ -4,6 +4,7 @@ export type UserDCFInputs = {
   [key: string]: number | undefined;
   revenues: number;
   revenue_growth_rate_next_year: number;
+  operating_income: number;
   operating_margin_next_year: number;
   compounded_annual_revenue_growth_rate: number;
   target_pre_tax_operating_margin: number;

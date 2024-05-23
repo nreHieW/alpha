@@ -37,6 +37,11 @@ function StackedBarChart({ data, labels }: BarChartProps) {
   const sumLabel = {
     id: "sumLabel",
     beforeDatasetDraw(chart: any, args: Object, plugins: any) {
+      if (window !== undefined) {
+        if (window.innerWidth < 640) {
+          return;
+        }
+      }
       const { ctx } = chart;
       const datasetMetas = Array.from(Array(4).keys()).map((i) =>
         chart.getDatasetMeta(i)
@@ -49,7 +54,7 @@ function StackedBarChart({ data, labels }: BarChartProps) {
         ctx.save();
         ctx.textAlign = "center";
         ctx.fillStyle = resolvedTheme === "dark" ? "white" : "black";
-        ctx.font = "9px JetBrains Mono";
+        ctx.font = "9.5px JetBrains Mono";
         ctx.fillText(label, bar.x, y - 8);
         ctx.restore();
       });
@@ -59,7 +64,7 @@ function StackedBarChart({ data, labels }: BarChartProps) {
   const maxAmt = data.datasets.reduce((acc, dataset) => {
     return Math.max(acc, ...dataset.data);
   }, 0);
-  const grace = maxAmt * 0.03;
+  const grace = maxAmt * 0.25;
 
   const options = {
     responsive: true,
