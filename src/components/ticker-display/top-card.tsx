@@ -1,28 +1,28 @@
 import { getPriceHistory } from "@/lib/apiHelpers";
 import LineAreaChart from "../line-area-chart";
 import { formatAmount } from "./dataHelpers";
+import { Card, CardContent } from "../ui/card";
 
 function calculateValue(value: number, currPrice: number): number {
   return (currPrice / value) * 100;
 }
-// book_value_of_debt + cash_and_marketable_securities + cross_holdings_and_other_non_operating_assets - value_of_options
 
 export default async function TopCard({
   ticker,
   name,
   value_per_share,
-  book_value_of_debt,
-  cash_and_marketable_securities,
-  cross_holdings_and_other_non_operating_assets,
-  value_of_options,
+  final_components,
 }: {
   ticker: string;
   name: string;
   value_per_share: number;
-  book_value_of_debt: number;
-  cash_and_marketable_securities: number;
-  cross_holdings_and_other_non_operating_assets: number;
-  value_of_options: number;
+  final_components: {
+    present_value_of_cash_flows: number;
+    operating_value: number;
+    book_value_of_debt: number;
+    cash_and_marketable_securities: number;
+    cross_holdings_and_other_non_operating_assets: number;
+  };
 }) {
   const priceHistory = await getPriceHistory(ticker);
   const currentPrice = priceHistory[priceHistory.length - 1];
@@ -44,7 +44,7 @@ export default async function TopCard({
           title={"6M Performance"}
         />
       </div>
-      <div className="w-full pl-3 h-full flex flex-col">
+      <div className="w-full pl-5 h-full flex flex-col">
         <div className="flex flex-col h-full mt-6">
           <div className="text-sm">Value Per Share:</div>
           <div className="self-end mr-2 text-base sm:text-2xl">
@@ -54,11 +54,11 @@ export default async function TopCard({
         <div className="h-full">
           <p className="text-sm">
             This represents a{" "}
-            { value < 0 ? 
-            <span style={{ color: "rgb(218, 65, 103)" }}>
-              {Math.abs(value).toFixed(2)}% overvaluation
-            </span> : 
-            (value > 100 ? (
+            {value < 0 ? (
+              <span style={{ color: "rgb(218, 65, 103)" }}>
+                {Math.abs(value).toFixed(2)}% overvaluation
+              </span>
+            ) : value > 100 ? (
               <span style={{ color: "rgb(218, 65, 103)" }}>
                 {value.toFixed(2)}% overvaluation
               </span>
@@ -66,22 +66,38 @@ export default async function TopCard({
               <span style={{ color: "rgb(0, 196, 154)" }}>
                 {value.toFixed(2)}% undervaluation
               </span>
-            ))}{" "}
+            )}{" "}
             of the current price (${currentPrice.toFixed(2)}).
           </p>
           <br />
-          {/* <div style={{ fontSize: "0.65rem" }}>
-            <p>Book Value of Debt: {formatAmount(book_value_of_debt)}</p>
-            <p>
-              Cash and Equivalents:{" "}
-              {formatAmount(cash_and_marketable_securities)}
-            </p>
-            <p>
-              Non-Operating Assets:{" "}
-              {formatAmount(cross_holdings_and_other_non_operating_assets)}
-            </p>
-            <p>Value of Options: {value_of_options.toFixed(2)}</p>
-          </div> */}
+
+          <Card className= "bg-slate-50 dark:bg-zinc-950 pt-4 text-muted-foreground text-xs">
+            <CardContent>
+              <p className="">Components:</p>
+              <ul className="ml-4">
+                <li>
+                  Present Value of Cash Flows:{" "}
+                  {formatAmount(final_components.present_value_of_cash_flows)}
+                </li>
+                <li>
+                  Book Value of Debt:{" "}
+                  {formatAmount(final_components.book_value_of_debt)}
+                </li>
+                <li>
+                  Cash Equivalents :{" "}
+                  {formatAmount(
+                    final_components.cash_and_marketable_securities
+                  )}
+                </li>
+                <li>
+                  Non-Operating Assets:{" "}
+                  {
+                    formatAmount(final_components.cross_holdings_and_other_non_operating_assets)
+                  }
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

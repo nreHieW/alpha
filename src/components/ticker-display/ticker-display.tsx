@@ -6,11 +6,14 @@ import {
   createIncomeStatementData,
   decodeInputs,
   formatAmount,
+  preprocessData,
 } from "./dataHelpers";
 import CardItem from "./card-item";
 import InputForm from "./input-form";
 import { DCFInputData, UserDCFInputs } from "./types";
 import InfoHover from "../info-hover";
+
+
 
 export default async function TickerDisplay({
   ticker,
@@ -20,14 +23,18 @@ export default async function TickerDisplay({
   userInputs: string;
 }) {
   const dcfData = await getDCFInputs(ticker);
-
+  console.log(dcfData);
   let dcfInputs: DCFInputData = constructModellingData(dcfData);
   if (userInputs.length != 0) {
     let decoded: UserDCFInputs = decodeInputs(userInputs);
     dcfInputs = { ...dcfInputs, ...decoded };
   }
+
+  // console.log("start", dcfInputs);
+  dcfInputs = preprocessData(dcfInputs);
+  console.log(dcfInputs);
   let dcfOutput = await getDCFOutput(dcfInputs);
-  const { value_per_share, df, cost_of_capital_components } = dcfOutput!;
+  const { value_per_share, df, cost_of_capital_components, final_components } = dcfOutput!;
   const terminalData = df[df.length - 1];
 
   const incomeStatementData = createIncomeStatementData(df);
@@ -38,14 +45,7 @@ export default async function TickerDisplay({
         ticker={ticker}
         value_per_share={value_per_share}
         name={dcfData.name}
-        book_value_of_debt={dcfInputs.book_value_of_debt}
-        cash_and_marketable_securities={
-          dcfInputs.cash_and_marketable_securities
-        }
-        cross_holdings_and_other_non_operating_assets={
-          dcfInputs.cross_holdings_and_other_non_operating_assets
-        }
-        value_of_options={dcfInputs.value_of_options}
+        final_components={final_components}
       />
       <div>
         <div className="pt-7 flex items-center">
@@ -69,22 +69,22 @@ export default async function TickerDisplay({
           title="Discount Rate"
           tooltip="Cash flows are discounted at the cost of capital which is calculated using the CAPM model."
           footerChildren={
-            <>Cost of Capital: {formatAmount(df[0].cost_of_capital * 100)}</>
+            <>Cost of Capital: :&nbsp;&nbsp;&nbsp;{formatAmount(df[0].cost_of_capital * 100)}</>
           }
         >
           <>
-            Cost of Debt:{" "}
+            Cost of Debt:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.cost_of_debt * 100).toFixed(2)}%
             <br />
-            (Levered) Beta: {cost_of_capital_components.levered_beta.toFixed(2)}
+            (Levered) Beta: &nbsp;&nbsp;&nbsp;{cost_of_capital_components.levered_beta.toFixed(2)}
             <br />
-            Risk Free Rate:{" "}
+            Risk Free Rate:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.risk_free_rate * 100).toFixed(2)}%
             <br />
-            Equity Risk Premium:{" "}
+            Equity Risk Premium:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.equity_risk_premium * 100).toFixed(2)}
             <br />
-            Cost of Equity:{" "}
+            Cost of Equity:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.cost_of_equity * 100).toFixed(2)}%
           </>
         </CardItem>
@@ -93,7 +93,7 @@ export default async function TickerDisplay({
           tooltip="The value of the company at the end of the forecast period in stable growth."
           footerChildren={
             <div className="">
-              Terminal Value:{" "}
+              Terminal Value:&nbsp;&nbsp;&nbsp;
               {formatAmount(
                 terminalData.fcff /
                   (terminalData.cost_of_capital -
@@ -103,12 +103,12 @@ export default async function TickerDisplay({
           }
         >
           <>
-            Terminal Growth Rate:{" "}
+            Terminal Growth Rate:&nbsp;&nbsp;&nbsp;
             {(terminalData.revenue_growth_rate * 100).toFixed(2)}%
             <br />
-            Terminal Cash Flow: {formatAmount(terminalData.fcff)}
+            Terminal Cash Flow: &nbsp;&nbsp;&nbsp;{formatAmount(terminalData.fcff)}
             <br />
-            Terminal Discount Rate:{" "}
+            Terminal Discount Rate:&nbsp;&nbsp;&nbsp;
             {(terminalData.cost_of_capital * 100).toFixed(2)}%
           </>
         </CardItem>
@@ -125,6 +125,7 @@ export default async function TickerDisplay({
             dcfInputs.compounded_annual_revenue_growth_rate,
           target_pre_tax_operating_margin:
             dcfInputs.target_pre_tax_operating_margin,
+          discount_rate: df[0].cost_of_capital,
           year_of_convergence_for_margin:
             dcfInputs.year_of_convergence_for_margin,
           years_of_high_growth: dcfInputs.years_of_high_growth,
@@ -133,6 +134,7 @@ export default async function TickerDisplay({
             dcfInputs.sales_to_capital_ratio_steady,
           prob_of_failure: dcfInputs.prob_of_failure,
           value_of_options: dcfInputs.value_of_options,
+          adjust_r_and_d: dcfInputs.r_and_d_expenses.length > 0,
         }}
       />
     </div>

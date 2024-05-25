@@ -18,7 +18,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-      <div className={`${inter.className}`}>
+      <div className={`${inter.className} h-svh`}>
           <MainHeader></MainHeader>
           {children}
       </div>

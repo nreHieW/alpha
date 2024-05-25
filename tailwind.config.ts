@@ -10,12 +10,24 @@ const config = {
   ],
   prefix: "",
   theme: {
+    fontSize: {
+      xxs: '0.7rem',
+      xs: '0.9rem',
+      sm: '1rem',
+      base: '1.3rem',
+      xl: '1.5rem',
+      '2xl': '1.8rem',
+      '3xl': '2rem',
+      '4xl': '2.5rem',
+      '5xl': '3.052rem',
+    },
     container: {
       center: true,
       padding: "2rem",
       screens: {
         "2xl": "1400px",
       },
+      
     },
     extend: {
       colors: {

@@ -55,7 +55,7 @@ function StackedBarChart({ data, labels }: BarChartProps) {
         ctx.save();
         ctx.textAlign = "center";
         ctx.fillStyle = resolvedTheme === "dark" ? "white" : "black";
-        ctx.font = "9.5px JetBrains Mono";
+        ctx.font = "10px Poppins";
         ctx.fillText(label, bar.x, y - 8);
         ctx.restore();
       });
@@ -80,7 +80,7 @@ function StackedBarChart({ data, labels }: BarChartProps) {
         },
         ticks: {
           font: {
-            size: 9,
+            size: 11,
           },
         },
       },

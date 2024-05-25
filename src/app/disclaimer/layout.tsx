@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "../../globals.css";
+import "../globals.css";
 import MainHeader from "@/components/main-header";
 import HeaderSearchBar from "@/components/searchbar/header-search-bar";
 

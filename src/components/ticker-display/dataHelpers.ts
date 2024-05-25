@@ -47,11 +47,13 @@ export function createIncomeStatementData(data: any[]): BarChartData {
 
 const DCFInputKeys = [
   'revenues',
+  'operating_income',
   'interest_expense',
   'book_value_of_equity',
   'book_value_of_debt',
   'cash_and_marketable_securities',
   'cross_holdings_and_other_non_operating_assets',
+  'minority_interest',
   'number_of_shares_outstanding',
   'curr_price',
   'effective_tax_rate',
@@ -71,7 +73,8 @@ const DCFInputKeys = [
   'year_of_convergence_for_margin',
   'years_of_high_growth',
   'sales_to_capital_ratio_early',
-  'sales_to_capital_ratio_steady'
+  'sales_to_capital_ratio_steady',
+  'discount_rate',
 ];
 
 export function constructModellingData(data: any) : DCFInputData {
@@ -81,7 +84,14 @@ export function constructModellingData(data: any) : DCFInputData {
       result[key as keyof DCFInputData] = data[key];
     }
   });
+  result.r_and_d_expenses = data.extras.research_and_development;
   return result as DCFInputData;
+}
+
+export function preprocessData(data: DCFInputData) {
+  const result = { ...data };
+  result.r_and_d_expenses = (result.adjust_r_and_d === undefined || result.adjust_r_and_d) ? result.r_and_d_expenses : [];
+  return result;
 }
 
 export function encodeInputs(inputs: UserDCFInputs): string {

@@ -39,7 +39,7 @@ export default function HeaderSearchBar() {
           </div>
         )}
       </div>
-      <div className="px-4 align-baseline mx-auto hidden sm:block absolute top-11 w-1/4" style={{left: "52vw"}}>
+      <div className="align-baseline mx-auto hidden sm:block absolute top-11 rounded" style={{right: "30vw", width:"19vw"}}>
         <BaseSearchBar />
       </div>
     </div>
@@ -113,7 +113,7 @@ function BaseSearchBar() {
     <>
       <input
         type="text"
-        className="search w-full flex-1 py-2 px-3 dark:outline-zinc-300 outline outline-1 outline-zinc-800 text-xs dark:text-white"
+        className="search w-full flex-1 py-2 px-4 dark:outline-zinc-300 outline outline-1 outline-zinc-800 text-xxs dark:text-white rounded"
         placeholder="Ticker Search..."
         value={searchQuery}
         spellCheck="false"
@@ -126,7 +126,7 @@ function BaseSearchBar() {
           <Loading />
         </div>
       ) : items.length > 0 && searchQuery.length > 0 ? (
-        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black dark:bg-zinc-950 bg-zinc-100">
+        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black bg-slate-50 dark:bg-zinc-900">
           {items.map((item: TickerResult, index) => {
             const ticker = item.Ticker;
             const name = item.name;

@@ -72,8 +72,9 @@ export default function SearchBar() {
     <>
       <input
         type="text"
-        className="search w-full flex-1 py-3 px-5 dark:outline-white outline outline-1 outline-zinc-950"
+        className="search w-full flex-1 py-3 px-5 dark:outline-white outline outline-1 outline-zinc-950 rounded-full z-40"
         value={searchQuery}
+        placeholder="Search for a ticker..."
         spellCheck="false"
         autoCorrect="off"
         onChange={(event) => setSearchQuery(event.target.value)}
@@ -84,7 +85,7 @@ export default function SearchBar() {
           <Loading />
         </div>
       ) : items.length > 0 && searchQuery.length > 0 ? (
-        <ul className="results-list flex-1 py-2 w-full max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black dark:bg-zinc-900 bg-zinc-100">
+        <ul className="results-list flex-1 py-2 max-h-64 overflow-auto scrollbar scrollbar-track-transparent dark:scrollbar-thumb-white scrollbar-thumb-black bg-transparent">
           {items.map((item: TickerResult, index) => {
             const ticker = item.Ticker;
             const name = item.name;
@@ -119,7 +120,7 @@ interface SearchItemProps {
 
 function SearchItem({ text, url }: SearchItemProps) {
   return (
-    <li className="pt-1 text-sm hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
+    <li className="pt-1 text-sm hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full z-0">
       <Link href={url} style={{display: 'inline-block'}}>{text}</Link>
     </li>
   );

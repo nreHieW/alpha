@@ -24,13 +24,28 @@ def calc_cost_of_capital(interest_expense, pre_tax_cost_of_debt, average_maturit
     }
 
 
+def r_and_d_adjustment(expenses: list):
+
+    num_years = len(expenses) - 1
+    expenses = np.array(expenses)
+    unamortized_amount = np.linspace(1, 0, num_years + 1)
+    unamortized_amount = unamortized_amount * expenses
+    unamortized_amount = np.sum(unamortized_amount)
+    amortization_this_year = expenses[1:] / num_years
+    amortization_this_year = np.sum(amortization_this_year)
+    adjustment = expenses[0] - amortization_this_year
+    return adjustment, unamortized_amount
+
+
 def dcf(
     revenues,
+    operating_income,
     interest_expense,
     book_value_of_equity,
     book_value_of_debt,
     cash_and_marketable_securities,
     cross_holdings_and_other_non_operating_assets,
+    minority_interest,
     number_of_shares_outstanding,
     curr_price,
     effective_tax_rate,
@@ -51,16 +66,27 @@ def dcf(
     years_of_high_growth,
     sales_to_capital_ratio_early,
     sales_to_capital_ratio_steady,
+    r_and_d_expenses,
+    discount_rate: None,
 ):
 
     start_cost_of_capital, cost_of_capital_components = calc_cost_of_capital(
         interest_expense, pre_tax_cost_of_debt, average_maturity, book_value_of_debt, number_of_shares_outstanding, curr_price, unlevered_beta, marginal_tax_rate, risk_free_rate, equity_risk_premium
     )
+    if discount_rate is not None:
+        start_cost_of_capital = discount_rate
+
+    if len(r_and_d_expenses) > 0:
+
+        r_and_d_adjustment_value, value_of_research_asset = r_and_d_adjustment(r_and_d_expenses)
+        operating_income += r_and_d_adjustment_value
+    else:
+        value_of_research_asset = 0
 
     revenue_growth_rates = [0] + [revenue_growth_rate_next_year] + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 2) + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 6).tolist() + [risk_free_rate]
     df = pd.DataFrame({"revenue_growth_rate": revenue_growth_rates})
     df["revenues"] = revenues * (1 + df["revenue_growth_rate"]).cumprod()
-    starting_operating_margin = operating_margin_next_year
+    starting_operating_margin = operating_income / revenues
     # TODO: Adjust operating income then get margin rather than make it an input
     df["operating_margin"] = (
         [starting_operating_margin] + np.linspace(operating_margin_next_year, target_pre_tax_operating_margin, year_of_convergence_for_margin).tolist() + [target_pre_tax_operating_margin] * (11 - year_of_convergence_for_margin)
@@ -79,7 +105,7 @@ def dcf(
     df["reinvestment"] = (df["revenues"].diff(-1) * -1) / (np.linspace(sales_to_capital_ratio_early, sales_to_capital_ratio_steady, 7).tolist() + [sales_to_capital_ratio_steady] * 5)
 
     df.loc[0, "reinvestment"] = 0
-    starting_invested_capital = book_value_of_equity + book_value_of_debt - cash_and_marketable_securities
+    starting_invested_capital = book_value_of_equity + book_value_of_debt - cash_and_marketable_securities + value_of_research_asset
     df["invested_capital"] = starting_invested_capital + df["reinvestment"].cumsum()
     df["roic"] = df["ebit_after_tax"] / df["invested_capital"]
 
@@ -100,8 +126,19 @@ def dcf(
     proceeds_if_fail = pv_cf * 0.5
     op_value = pv_cf * (1 - prob_of_failure) + proceeds_if_fail * prob_of_failure
 
-    value_of_equity = op_value - book_value_of_debt + cash_and_marketable_securities + cross_holdings_and_other_non_operating_assets
+    value_of_equity = op_value - book_value_of_debt - minority_interest + cash_and_marketable_securities + cross_holdings_and_other_non_operating_assets
     value_of_equity = value_of_equity - value_of_options
     value_per_share = value_of_equity / number_of_shares_outstanding
     df.index = ["Base"] + list(range(1, 11)) + ["Terminal"]
-    return value_per_share, df, cost_of_capital_components
+    return (
+        value_per_share,
+        df,
+        cost_of_capital_components,
+        {
+            "present_value_of_cash_flows": pv_cf,
+            "operating_value": op_value,
+            "book_value_of_debt": book_value_of_debt,
+            "cash_and_marketable_securities": cash_and_marketable_securities,
+            "cross_holdings_and_other_non_operating_assets": cross_holdings_and_other_non_operating_assets,
+        },
+    )
