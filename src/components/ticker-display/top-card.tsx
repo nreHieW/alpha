@@ -46,7 +46,7 @@ export default async function TopCard({
           title={"6M Performance"}
         />
         <p className="text-xxs pt-4 italic" style={{opacity: "50%"}}>
-          Using financials from: {date}
+          Financials from: {date}
         </p>
       </div>
       <div className="w-full pl-5 h-full flex flex-col">
