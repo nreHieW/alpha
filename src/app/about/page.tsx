@@ -24,7 +24,7 @@ export default function AboutPage() {
         what is val.
       </h1>
       <div>
-        Val is modelled after Professor Aswath Damodaran's{" "}
+        Val is modelled after Professor Aswath Damodaran&apos;s{" "}
         <a
           href="https://www.youtube.com/watch?v=kyKfJ_7-mdg"
           className="underline"
@@ -87,7 +87,7 @@ export default function AboutPage() {
       <div>
         The Cost of Debt is the rate a company can borrow money long term today,
         reflecting both default risk and level of interest rates. Following
-        Professor Damodaran's approach, Val computes synthetic ratings of
+        Professor Damodaran&apos;s approach, Val computes synthetic ratings of
         companies using the Interest Coverage Ratio (EBIT / Interest Expenses).
       </div>
       <h2
@@ -195,7 +195,7 @@ export default function AboutPage() {
               Why is my Value Per Share negative?
             </AccordionTrigger>
             <AccordionContent className="text-xs">
-              This is likely due to your company's business model. For example,
+              This is likely due to your company&apos;s business model. For example,
               a very capital heavy company might have many capital leases. This
               leads to a high book value of debt. One way to combat this would
               be to manually adjust the book value of debt. Either way,
