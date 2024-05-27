@@ -88,7 +88,7 @@ export default async function TopCard({
             <CardContent className="px-4 mt-0 py-4 pt-0">
               <ul className="">
                 <li>
-                  Present Value of Cash Flows:{" "}
+                  Present Value of All Cash Flows:{" "}
                   {formatAmount(final_components.present_value_of_cash_flows, true)}
                 </li>
                 <li>
@@ -109,7 +109,7 @@ export default async function TopCard({
                 </li>
                 <li>
                   Minority Interest:{" "}
-                  {formatAmount(final_components.minority_interest)}
+                  {formatAmount(final_components.minority_interest, true)}
                 </li>
               </ul>
             </CardContent>

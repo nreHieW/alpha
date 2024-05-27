@@ -131,7 +131,6 @@ def dcf(
 
     proceeds_if_fail = pv_cf * 0.5
     op_value = pv_cf * (1 - prob_of_failure) + proceeds_if_fail * prob_of_failure
-
     value_of_equity = op_value - book_value_of_debt - minority_interest + cash_and_marketable_securities + cross_holdings_and_other_non_operating_assets
     value_of_equity = value_of_equity - value_of_options
     value_per_share = value_of_equity / number_of_shares_outstanding
