@@ -216,7 +216,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
                               <Input
                                 {...field}
                                 placeholder={formDefaults[item.key]?.toFixed(2)}
-                                defaultValue={formDefaults[item.key]?.toFixed(2)}
+                                value={field.value}
                               />
                               <FormMessage className="text-xs mt-1" />
                             </div>

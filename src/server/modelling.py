@@ -84,7 +84,11 @@ def dcf(
         value_of_research_asset = 0
 
     revenue_growth_rates = (
-        [0] + [revenue_growth_rate_next_year] + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 1) + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 10 - years_of_high_growth).tolist() + [risk_free_rate]
+        [0]
+        + [revenue_growth_rate_next_year]
+        + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 2)
+        + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 10 - years_of_high_growth + 1).tolist()
+        + [risk_free_rate]
     )
     df = pd.DataFrame({"revenue_growth_rate": revenue_growth_rates})
     df["revenues"] = revenues * (1 + df["revenue_growth_rate"]).cumprod()

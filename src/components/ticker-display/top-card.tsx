@@ -52,7 +52,7 @@ export default async function TopCard({
       <div className="w-full pl-5 h-full flex flex-col">
         <div className="flex flex-col h-full mt-6">
           <div className="text-sm">Value Per Share:</div>
-          <div className="self-end mr-2 text-base sm:text-2xl">
+          <div className="self-end mr-2 text-2xl">
             ${value_per_share.toFixed(2)}
           </div>
         </div>

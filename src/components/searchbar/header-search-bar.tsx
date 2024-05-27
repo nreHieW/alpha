@@ -53,7 +53,7 @@ interface SearchItemProps {
 
 function SearchItem({ text, url }: SearchItemProps) {
   return (
-    <li className="pt-1 text-xxs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
+    <li className="pt-1 text-xs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
       <Link href={url} style={{ display: "inline-block" }}>
         {text}
       </Link>
@@ -113,7 +113,7 @@ function BaseSearchBar() {
     <>
       <input
         type="text"
-        className="search w-full flex-1 py-2 px-4 dark:outline-zinc-300 outline outline-1 outline-zinc-800 text-xxs dark:text-white rounded"
+        className="search w-full flex-1 py-2 px-4 dark:outline-zinc-300 outline outline-1 outline-zinc-800 text-xs dark:text-white rounded"
         placeholder="Ticker Search..."
         value={searchQuery}
         spellCheck="false"
