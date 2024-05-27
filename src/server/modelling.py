@@ -69,7 +69,7 @@ def dcf(
     r_and_d_expenses,
     discount_rate: None,
 ):
-
+    revenues = revenues + 1e-8
     start_cost_of_capital, cost_of_capital_components = calc_cost_of_capital(
         interest_expense, pre_tax_cost_of_debt, average_maturity, book_value_of_debt, number_of_shares_outstanding, curr_price, unlevered_beta, marginal_tax_rate, risk_free_rate, equity_risk_premium
     )
@@ -83,7 +83,9 @@ def dcf(
     else:
         value_of_research_asset = 0
 
-    revenue_growth_rates = [0] + [revenue_growth_rate_next_year] + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 2) + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 6).tolist() + [risk_free_rate]
+    revenue_growth_rates = (
+        [0] + [revenue_growth_rate_next_year] + [compounded_annual_revenue_growth_rate] * (years_of_high_growth - 1) + np.linspace(compounded_annual_revenue_growth_rate, risk_free_rate, 10 - years_of_high_growth).tolist() + [risk_free_rate]
+    )
     df = pd.DataFrame({"revenue_growth_rate": revenue_growth_rates})
     df["revenues"] = revenues * (1 + df["revenue_growth_rate"]).cumprod()
     starting_operating_margin = operating_income / revenues
@@ -136,9 +138,9 @@ def dcf(
         cost_of_capital_components,
         {
             "present_value_of_cash_flows": pv_cf,
-            "operating_value": op_value,
             "book_value_of_debt": book_value_of_debt,
             "cash_and_marketable_securities": cash_and_marketable_securities,
             "cross_holdings_and_other_non_operating_assets": cross_holdings_and_other_non_operating_assets,
+            "minority_interest": minority_interest,
         },
     )

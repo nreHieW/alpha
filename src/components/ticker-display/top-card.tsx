@@ -12,17 +12,19 @@ export default async function TopCard({
   name,
   value_per_share,
   final_components,
+  date,
 }: {
   ticker: string;
   name: string;
   value_per_share: number;
   final_components: {
     present_value_of_cash_flows: number;
-    operating_value: number;
     book_value_of_debt: number;
     cash_and_marketable_securities: number;
     cross_holdings_and_other_non_operating_assets: number;
-  };
+    minority_interest: number;
+  }
+  date: string;
 }) {
   const priceHistory = await getPriceHistory(ticker);
   const currentPrice = priceHistory[priceHistory.length - 1];
@@ -34,15 +36,18 @@ export default async function TopCard({
   return (
     <div className="grid sm:grid-cols-2 w-full">
       <div className="w-full h-full flex-1">
-        <p className="text-base underline-offset-4 underline sm:text-xl">
+        <h1 className="text-base underline-offset-4 underline sm:text-xl">
           {name}
-        </p>
+        </h1>
         <p className="text-xs pt-1">Ticker: {ticker}</p>
         <LineAreaChart
           priceHistory={priceHistory}
           good={currentPrice > startPrice}
           title={"6M Performance"}
         />
+        <p className="text-xxs pt-4 italic" style={{opacity: "50%"}}>
+          Using financials from: {date}
+        </p>
       </div>
       <div className="w-full pl-5 h-full flex flex-col">
         <div className="flex flex-col h-full mt-6">
@@ -52,11 +57,11 @@ export default async function TopCard({
           </div>
         </div>
         <div className="h-full">
-          <p className="text-sm">
-            This represents a{" "}
+          <p>
+            This suggests a{" "}
             {value < 0 ? (
               <span style={{ color: "rgb(218, 65, 103)" }}>
-                {Math.abs(value).toFixed(2)}% overvaluation
+                deeper analysis of the business model is required.
               </span>
             ) : value > 100 ? (
               <span style={{ color: "rgb(218, 65, 103)" }}>
@@ -66,34 +71,45 @@ export default async function TopCard({
               <span style={{ color: "rgb(0, 196, 154)" }}>
                 {value.toFixed(2)}% undervaluation
               </span>
-            )}{" "}
-            of the current price (${currentPrice.toFixed(2)}).
+            )}
+            {value >= 0 &&
+              ` relative to the current market price of $${currentPrice.toFixed(
+                2
+              )}.`}
           </p>
           <br />
 
-          <Card className= "bg-slate-50 dark:bg-zinc-950 pt-4 text-muted-foreground text-xs">
-            <CardContent>
-              <p className="">Components:</p>
-              <ul className="ml-4">
+          <br />
+
+          <Card
+            className="bg-slate-50 dark:bg-zinc-950 pt-4 text-xxs"
+            style={{ opacity: "50%" }}
+          >
+            <CardContent className="px-4 mt-0 py-4 pt-0">
+              <ul className="">
                 <li>
                   Present Value of Cash Flows:{" "}
-                  {formatAmount(final_components.present_value_of_cash_flows)}
+                  {formatAmount(final_components.present_value_of_cash_flows, true)}
                 </li>
                 <li>
                   Book Value of Debt:{" "}
-                  {formatAmount(final_components.book_value_of_debt)}
+                  {formatAmount(final_components.book_value_of_debt, true)}
                 </li>
                 <li>
                   Cash Equivalents :{" "}
                   {formatAmount(
-                    final_components.cash_and_marketable_securities
+                    final_components.cash_and_marketable_securities, true
                   )}
                 </li>
                 <li>
                   Non-Operating Assets:{" "}
-                  {
-                    formatAmount(final_components.cross_holdings_and_other_non_operating_assets)
-                  }
+                  {formatAmount(
+                    final_components.cross_holdings_and_other_non_operating_assets, true
+                  )}
+                </li>
+                <li>
+                  Minority Interest:{" "}
+                  {formatAmount(final_components.minority_interest)}
                 </li>
               </ul>
             </CardContent>

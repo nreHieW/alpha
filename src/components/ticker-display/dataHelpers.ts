@@ -108,14 +108,16 @@ export function decodeInputs(encoding: string): UserDCFInputs {
   return data as UserDCFInputs;
 }
 
-export function formatAmount(value: number): string {
-  if (value >= 1e9) {
+export function formatAmount(value: number, money: boolean = false): string {
+  if (Math.abs(value) >= 1e9) {
     return `$${(value / 1e9).toFixed(2)}B`;
-  } else if (value >= 1e6) {
+  } else if (Math.abs(value) >= 1e6) {
     return `$${(value / 1e6).toFixed(2)}M`;
-  } else if (value < 1e-2) {
-    return `${(value * 100).toFixed(2)}%`;
   } else {
-    return `${value.toFixed(2)}%`;
+    if (money) {
+      return `$${value.toFixed(2)}`;
+    } else {
+      return `${value.toFixed(2)}%`
+    }
   }
 }

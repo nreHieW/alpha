@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { UserDCFInputs } from "./types";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,12 +37,12 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
   const userDCFInputSchema = z.object({
     revenues: z.coerce.number(),
     revenue_growth_rate_next_year: z.coerce.number(),
-    operating_margin_next_year: z.coerce.number(),
+    operating_margin_next_year: z.coerce.number().min(0),
     compounded_annual_revenue_growth_rate: z.coerce.number(),
     target_pre_tax_operating_margin: z.coerce.number(),
-    year_of_convergence_for_margin: z.coerce.number(),
+    year_of_convergence_for_margin: z.coerce.number().min(0).max(10),
     discount_rate: z.coerce.number(),
-    years_of_high_growth: z.coerce.number(),
+    years_of_high_growth: z.coerce.number().min(0).max(10),
     sales_to_capital_ratio_early: z.coerce.number(),
     sales_to_capital_ratio_steady: z.coerce.number(),
     prob_of_failure: z.coerce.number(),
@@ -81,6 +81,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
     defaultValues: formDefaults,
   });
 
+
   const fields: FieldValue[] = [
     {
       displayLabel: "Revenues",
@@ -115,7 +116,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
     {
       displayLabel: "Year of Convergence for Margin",
       key: "year_of_convergence_for_margin",
-      tooltip: "Number of years for the margin to converge to the target.",
+      tooltip: "Number of years for the margin to converge to the target. (0-10)",
       decodeFn: (value: string) => parseFloat(value),
     },
     {
@@ -127,7 +128,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
     {
       displayLabel: "Years of High Growth",
       key: "years_of_high_growth",
-      tooltip: "How long before the company reaches steady state growth.",
+      tooltip: "How long before the company reaches steady state growth. (0-10)",
       decodeFn: (value: string) => parseFloat(value),
     },
     {
@@ -159,13 +160,14 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
       decodeFn: (value: string) => parseFloat(value) * 1e6,
     },
   ];
-  function onSubmit(values: z.infer<typeof userDCFInputSchema>) {
+  function onSubmit(values: z.infer<typeof userDCFInputSchema>, e: any) {
+    e.preventDefault();
     const newValues = { ...defaults, ...values };
     const encodedValues = Object.entries(newValues).map(([key, value]) => {
       const field = fields.find((field) => field.key === key);
       return [key, field ? field.decodeFn(String(value)) : value];
     });
-    router.push(`?inputs=${encodeInputs(Object.fromEntries(encodedValues))}`);
+    router.push(`?inputs=${encodeInputs(Object.fromEntries(encodedValues))}?`);
   }
   const baseUrl = usePathname();
   const { reset } = form;
@@ -181,7 +183,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
           <AccordionTrigger>Inputs</AccordionTrigger>
           <AccordionContent>
             <p className="text-xxs text-muted-foreground/40 text-right">
-              For more details on the inputs, please visit{" "}
+              For more details on each input, please visit{" "}
               <a href="/about#inputs_description" className="underline"
             target="_blank" rel="noopener noreferrer">
                 here
@@ -214,6 +216,7 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
                               <Input
                                 {...field}
                                 placeholder={formDefaults[item.key]?.toFixed(2)}
+                                defaultValue={formDefaults[item.key]?.toFixed(2)}
                               />
                               <FormMessage className="text-xs mt-1" />
                             </div>
@@ -249,7 +252,13 @@ function InputForm({ defaults }: { defaults: UserDCFInputs }) {
                 <div className="self-end pt-3">
                   <Button
                     onClick={() => {
-                      reset();
+                      reset(
+                        Object.fromEntries(
+                          Object.entries(formDefaults).map(([key, value]) => {
+                            return [key, value];
+                          })
+                        )
+                      );
                     }}
                     variant={"outline"}
                     className="mr-5"

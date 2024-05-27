@@ -13,8 +13,6 @@ import InputForm from "./input-form";
 import { DCFInputData, UserDCFInputs } from "./types";
 import InfoHover from "../info-hover";
 
-
-
 export default async function TickerDisplay({
   ticker,
   userInputs,
@@ -23,20 +21,17 @@ export default async function TickerDisplay({
   userInputs: string;
 }) {
   const dcfData = await getDCFInputs(ticker);
-  console.log(dcfData);
   let dcfInputs: DCFInputData = constructModellingData(dcfData);
   if (userInputs.length != 0) {
     let decoded: UserDCFInputs = decodeInputs(userInputs);
     dcfInputs = { ...dcfInputs, ...decoded };
   }
 
-  // console.log("start", dcfInputs);
   dcfInputs = preprocessData(dcfInputs);
-  console.log(dcfInputs);
   let dcfOutput = await getDCFOutput(dcfInputs);
-  const { value_per_share, df, cost_of_capital_components, final_components } = dcfOutput!;
+  const { value_per_share, df, cost_of_capital_components, final_components } =
+    dcfOutput!;
   const terminalData = df[df.length - 1];
-
   const incomeStatementData = createIncomeStatementData(df);
   const revenues = df.map((item: any) => formatAmount(item.revenues));
   return (
@@ -46,12 +41,13 @@ export default async function TickerDisplay({
         value_per_share={value_per_share}
         name={dcfData.name}
         final_components={final_components}
+        date={dcfData.extras.last_updated_financials}
       />
       <div>
         <div className="pt-7 flex items-center">
           <div className="flex-row flex">
             <p className="text-lg">10 Year Revenue Projections</p>
-            <div className="justify-center items-center ml-3 mt-2">
+            <div className="justify-center items-center ml-3 mt-1">
               <InfoHover
                 text={
                   "Revenues are broken down into operating expense, reinvestment to drive future growth and taxes, to get Free Cash Flow to Firm"
@@ -69,14 +65,18 @@ export default async function TickerDisplay({
           title="Discount Rate"
           tooltip="Cash flows are discounted at the cost of capital which is calculated using the CAPM model."
           footerChildren={
-            <>Cost of Capital: :&nbsp;&nbsp;&nbsp;{formatAmount(df[0].cost_of_capital * 100)}</>
+            <>
+              Cost of Capital: :&nbsp;&nbsp;&nbsp;
+              {formatAmount(df[0].cost_of_capital * 100)}
+            </>
           }
         >
           <>
             Cost of Debt:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.cost_of_debt * 100).toFixed(2)}%
             <br />
-            (Levered) Beta: &nbsp;&nbsp;&nbsp;{cost_of_capital_components.levered_beta.toFixed(2)}
+            (Levered) Beta: &nbsp;&nbsp;&nbsp;
+            {cost_of_capital_components.levered_beta.toFixed(2)}
             <br />
             Risk Free Rate:&nbsp;&nbsp;&nbsp;
             {(cost_of_capital_components.risk_free_rate * 100).toFixed(2)}%
@@ -106,7 +106,8 @@ export default async function TickerDisplay({
             Terminal Growth Rate:&nbsp;&nbsp;&nbsp;
             {(terminalData.revenue_growth_rate * 100).toFixed(2)}%
             <br />
-            Terminal Cash Flow: &nbsp;&nbsp;&nbsp;{formatAmount(terminalData.fcff)}
+            Terminal Cash Flow: &nbsp;&nbsp;&nbsp;
+            {formatAmount(terminalData.fcff)}
             <br />
             Terminal Discount Rate:&nbsp;&nbsp;&nbsp;
             {(terminalData.cost_of_capital * 100).toFixed(2)}%
