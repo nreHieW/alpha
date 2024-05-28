@@ -7,7 +7,7 @@ import { Info } from "lucide-react";
 export default function InfoHover({ text }: { text: string }) {
   return (
     <HoverCard>
-      <HoverCardTrigger style={{ opacity: "30%" }} className="flex h-full">
+      <HoverCardTrigger style={{ opacity: "30%" }} className="h-full hidden sm:flex">
         <Info style={{ width: "0.9em", height: "0.9em" }}/>
       </HoverCardTrigger>
       <HoverCardContent>

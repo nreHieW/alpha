@@ -23,7 +23,7 @@ export default async function TopCard({
     cash_and_marketable_securities: number;
     cross_holdings_and_other_non_operating_assets: number;
     minority_interest: number;
-  }
+  };
   date: string;
 }) {
   const priceHistory = await getPriceHistory(ticker);
@@ -45,7 +45,7 @@ export default async function TopCard({
           good={currentPrice > startPrice}
           title={"6M Performance"}
         />
-        <p className="text-xxs pt-4 italic" style={{opacity: "50%"}}>
+        <p className="text-xxs pt-4 italic" style={{ opacity: "50%" }}>
           Financials from: {date}
         </p>
       </div>
@@ -58,24 +58,26 @@ export default async function TopCard({
         </div>
         <div className="h-full">
           <p>
-            This suggests a{" "}
+            This suggests{" "}
             {value < 0 ? (
               <span style={{ color: "rgb(218, 65, 103)" }}>
-                deeper analysis of the business model is required.
+                a deeper analysis of the business model is required.
               </span>
             ) : value > 100 ? (
-              <span style={{ color: "rgb(218, 65, 103)" }}>
-                {value.toFixed(2)}% overvaluation
+              <span>
+                the current market price of ${currentPrice.toFixed(2)} is{" "}
+                <span style={{ color: "rgb(218, 65, 103)" }}>
+                  {value.toFixed(2)}% of {ticker}&apos;s intrinsic value.
+                </span>
               </span>
             ) : (
-              <span style={{ color: "rgb(0, 196, 154)" }}>
-                {value.toFixed(2)}% undervaluation
+              <span>
+                the current market price of ${currentPrice.toFixed(2)} is{" "}
+                <span style={{ color: "rgb(0, 196, 154)" }}>
+                  {value.toFixed(2)}% of {ticker}&apos;s intrinsic value.
+                </span>
               </span>
             )}
-            {value >= 0 &&
-              ` relative to the current market price of $${currentPrice.toFixed(
-                2
-              )}.`}
           </p>
           <br />
 
@@ -89,7 +91,10 @@ export default async function TopCard({
               <ul className="">
                 <li>
                   Present Value of All Cash Flows:{" "}
-                  {formatAmount(final_components.present_value_of_cash_flows, true)}
+                  {formatAmount(
+                    final_components.present_value_of_cash_flows,
+                    true
+                  )}
                 </li>
                 <li>
                   Book Value of Debt:{" "}
@@ -98,13 +103,15 @@ export default async function TopCard({
                 <li>
                   Cash Equivalents :{" "}
                   {formatAmount(
-                    final_components.cash_and_marketable_securities, true
+                    final_components.cash_and_marketable_securities,
+                    true
                   )}
                 </li>
                 <li>
                   Non-Operating Assets:{" "}
                   {formatAmount(
-                    final_components.cross_holdings_and_other_non_operating_assets, true
+                    final_components.cross_holdings_and_other_non_operating_assets,
+                    true
                   )}
                 </li>
                 <li>
