@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Footer from "@/components/footer";
+import { Analytics } from '@vercel/analytics/react';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -34,7 +35,9 @@ export default function RootLayout({
       >
         <div className="">
           {" "}
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>{children}
+          <Analytics/>
+          </ThemeProvider>
         </div>
         <Footer></Footer>
       </body>
