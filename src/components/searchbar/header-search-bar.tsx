@@ -53,7 +53,7 @@ interface SearchItemProps {
 
 function SearchItem({ text, url }: SearchItemProps) {
   return (
-    <li className="pt-1 text-xxs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
+    <li className="pt-1 text-xs hover:dark:bg-zinc-700 hover:py-1 hover:rounded px-5 hover:bg-zinc-300 w-full">
       <Link href={url} style={{ display: "inline-block" }}>
         {text}
       </Link>
