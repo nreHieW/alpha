@@ -77,16 +77,27 @@ const DCFInputKeys = [
   'discount_rate',
 ];
 
-export function constructModellingData(data: any) : DCFInputData {
+export function constructModellingData(data: any): DCFInputData {
   const result: Partial<DCFInputData> = {};
   DCFInputKeys.forEach((key) => {
     if (key in data) {
       result[key as keyof DCFInputData] = data[key];
+    } else {
+      result[key as keyof DCFInputData] = 0;
     }
   });
-  result.r_and_d_expenses = data.extras.research_and_development;
+  result.r_and_d_expenses = data.extras?.research_and_development ?? [0];
+
+  // Loop through the result and replace undefined values with 0
+  for (const key in result) {
+    if (result[key as keyof DCFInputData] === undefined) {
+      result[key as keyof DCFInputData] = 0;
+    }
+  }
+
   return result as DCFInputData;
 }
+
 
 export function preprocessData(data: DCFInputData) {
   const result = { ...data };

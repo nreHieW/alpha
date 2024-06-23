@@ -22,6 +22,7 @@ export default async function TickerDisplay({
 }) {
   const dcfData = await getDCFInputs(ticker);
   let dcfInputs: DCFInputData = constructModellingData(dcfData);
+  // console.log(dcfInputs);
   if (userInputs.length != 0) {
     let decoded: UserDCFInputs = decodeInputs(userInputs);
     dcfInputs = { ...dcfInputs, ...decoded };
@@ -29,6 +30,7 @@ export default async function TickerDisplay({
 
   dcfInputs = preprocessData(dcfInputs);
   let dcfOutput = await getDCFOutput(dcfInputs);
+  // console.log(dcfOutput);
   const { value_per_share, df, cost_of_capital_components, final_components } =
     dcfOutput!;
   const terminalData = df[df.length - 1];
