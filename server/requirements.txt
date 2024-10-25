@@ -2,5 +2,5 @@ numpy==1.26.4
 pandas==1.5.3
 requests[security]
 yfinance==0.2.38
-fastapi
+fastapi[standard]
 uvicorn
