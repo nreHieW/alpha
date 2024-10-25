@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 from modelling import dcf, calc_cost_of_capital
 import pandas as pd
 from pydantic import BaseModel
@@ -53,8 +52,6 @@ class DCFRequest(BaseModel):
     discount_rate: float = None
 
 
-load_dotenv()
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -65,19 +62,19 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/api/py/")
 def read_root():
     return {"Status": "OK"}
 
 
-@app.get("/history")
+@app.get("/api/py/history")
 def get_history(ticker: str):
     ticker = yf.Ticker(ticker)
     out = ticker.history(period="6mo")["Close"].values
     return {"history": out.tolist()}
 
 
-@app.post("/costOfCapital")
+@app.post("/api/py/costOfCapital")
 def cost_of_capital(request: CostOfCapitalRequest):
     return calc_cost_of_capital(
         request.interest_expense,
@@ -93,7 +90,7 @@ def cost_of_capital(request: CostOfCapitalRequest):
     )
 
 
-@app.post("/dcf")
+@app.post("/api/py/dcf")
 def discounted_cash_flow(request: DCFRequest):
     value_per_share, df, cost_of_capital_components, final_components = dcf(
         revenues=request.revenues,

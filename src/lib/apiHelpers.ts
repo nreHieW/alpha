@@ -12,7 +12,7 @@ export async function getDCFInputs(query: string) {
 }
 export async function getPriceHistory(query: string) {
   const response = await fetch(
-    `${process.env.COMPUTE_LINK}/history?ticker=${encodeURIComponent(query)}`, { next: { revalidate: 60 } }
+    `${process.env.URL}/api/py/history?ticker=${encodeURIComponent(query)}`, { next: { revalidate: 60 } }
   );
   let data = await response.json();
 
@@ -21,7 +21,7 @@ export async function getPriceHistory(query: string) {
 export async function getDCFOutput(inputData: DCFInputData) {
   if (!inputData) return;
   
-  const response = await fetch(`${process.env.COMPUTE_LINK}/dcf`, {
+  const response = await fetch(`${process.env.URL}/api/py/dcf`, {
     cache: "no-store",
     method: "POST",
     headers: {

@@ -13,7 +13,6 @@ def calc_cost_of_capital(interest_expense, pre_tax_cost_of_debt, average_maturit
 
     cost_of_debt = pre_tax_cost_of_debt * (1 - tax_rate)
     cost_of_equity = risk_free_rate + levered_beta * equity_risk_premium
-
     cost_of_capital = cost_of_debt * debt_weight + cost_of_equity * equity_weight
     return cost_of_capital, {
         "cost_of_debt": cost_of_debt,
@@ -67,13 +66,13 @@ def dcf(
     sales_to_capital_ratio_early,
     sales_to_capital_ratio_steady,
     r_and_d_expenses,
-    discount_rate: None,
+    discount_rate: int = 0,
 ):
     revenues = revenues + 1e-8
     start_cost_of_capital, cost_of_capital_components = calc_cost_of_capital(
         interest_expense, pre_tax_cost_of_debt, average_maturity, book_value_of_debt, number_of_shares_outstanding, curr_price, unlevered_beta, marginal_tax_rate, risk_free_rate, equity_risk_premium
     )
-    if discount_rate is not None:
+    if discount_rate != 0:
         start_cost_of_capital = discount_rate
 
     if len(r_and_d_expenses) > 0:
@@ -95,7 +94,9 @@ def dcf(
     starting_operating_margin = operating_income / revenues
     # TODO: Adjust operating income then get margin rather than make it an input
     df["operating_margin"] = (
-        [starting_operating_margin] + np.linspace(operating_margin_next_year, target_pre_tax_operating_margin, year_of_convergence_for_margin).tolist() + [target_pre_tax_operating_margin] * (11 - year_of_convergence_for_margin)
+        [starting_operating_margin]
+        + np.linspace(operating_margin_next_year, target_pre_tax_operating_margin, year_of_convergence_for_margin).tolist()
+        + [target_pre_tax_operating_margin] * (11 - year_of_convergence_for_margin)
     )
     df["operating_income"] = df["revenues"] * df["operating_margin"]
     df["tax_rate"] = [effective_tax_rate] * 6 + np.linspace(effective_tax_rate, marginal_tax_rate, 5).tolist() + [marginal_tax_rate]
