@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from modelling import dcf, calc_cost_of_capital
-import pandas as pd
+from .modelling import dcf, calc_cost_of_capital
 from pydantic import BaseModel
 import yfinance as yf
 
