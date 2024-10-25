@@ -52,7 +52,7 @@ class DCFRequest(BaseModel):
     discount_rate: float = None
 
 
-app = FastAPI()
+app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

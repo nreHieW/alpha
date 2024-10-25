@@ -6,8 +6,7 @@ export async function getDCFInputs(query: string) {
     `${baseURL}/api/ticker?ticker=${encodeURIComponent(query)}`,{ next: { revalidate: 60 } }
   );
   let data = await response.json();
-  console.log("Getting DCF Inputs");
-  console.log(data);
+  // console.log("Getting DCF Inputs");
 
   return data[0];
 }
@@ -31,8 +30,6 @@ export async function getDCFOutput(inputData: DCFInputData) {
     body: JSON.stringify(inputData),
   });
   const data = await response.json();
-  console.log("Getting DCF Output");
-  console.log(data);
   return data;
 }
 
