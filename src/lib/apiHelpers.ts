@@ -10,7 +10,7 @@ export async function getDCFInputs(query: string) {
 }
 export async function getPriceHistory(query: string) {
   const response = await fetch(
-    `${process.env.URL}/api/py/history?ticker=${encodeURIComponent(query)}`, { next: { revalidate: 60 } }
+    `${baseURL}/api/py/history?ticker=${encodeURIComponent(query)}`, { next: { revalidate: 60 } }
   );
   let data = await response.json();
 

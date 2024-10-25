@@ -1,5 +1,4 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
   rewrites: async () => {
     return [
       {
@@ -26,5 +25,3 @@ const nextConfig = {
     ];
   },
 };
-
-module.exports = nextConfig;
