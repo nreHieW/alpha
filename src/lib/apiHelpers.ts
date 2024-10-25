@@ -6,8 +6,6 @@ export async function getDCFInputs(query: string) {
     `${baseURL}/api/ticker?ticker=${encodeURIComponent(query)}`,{ next: { revalidate: 60 } }
   );
   let data = await response.json();
-  // console.log("Getting DCF Inputs");
-
   return data[0];
 }
 export async function getPriceHistory(query: string) {
@@ -20,8 +18,9 @@ export async function getPriceHistory(query: string) {
 }
 export async function getDCFOutput(inputData: DCFInputData) {
   if (!inputData) return;
-  
-  const response = await fetch(`${process.env.URL}/api/py/dcf`, {
+
+  const response = await fetch(`${baseURL}/api/py/dcf`, {
+    
     cache: "no-store",
     method: "POST",
     headers: {
@@ -29,6 +28,7 @@ export async function getDCFOutput(inputData: DCFInputData) {
     },
     body: JSON.stringify(inputData),
   });
+
   const data = await response.json();
   return data;
 }
