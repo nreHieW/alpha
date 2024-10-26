@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "fastapi-dev": "pip3 install -r requirements.txt && rm -rvf python/lib/python3.12/site-packages/pandas/tests && python3 -m uvicorn api.index:app --reload",
+    "fastapi-dev": "echo test",
     "next-dev": "next dev",
     "dev": "concurrently \"npm run next-dev\" \"npm run fastapi-dev\"",
     "build": "next build",
