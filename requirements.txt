@@ -1,5 +1,0 @@
-pandas==1.5.3
-requests
-yfinance==0.2.38
-fastapi
-uvicorn
